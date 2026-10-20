@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenBite | Полезные снеки</title>
+    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50'%20y='60'%20font-size='80'%20text-anchor='middle'%20dominant-baseline='middle'%20font-family='Arial'%3E🥜%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #27AE60;
+            --primary-dark: #229953;
+            --text-dark: #1A1A1A;
+            --text-gray: #666;
+            --bg-light: #F8FFF7;
+            --bg-white: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --danger: #E74C3C;
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; line-height: 1.6; color: var(--text-dark); background-color: var(--bg-light); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        header { background: var(--bg-white); box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .cart-icon { font-size: 1.4rem; cursor: pointer; position: relative; }
+        .cart-count { position: absolute; top: -5px; right: -10px; background: var(--primary); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+        nav a { margin-left: 30px; text-decoration: none; color: var(--text-dark); font-weight: 500; transition: color 0.3s; }
+        nav a:hover { color: var(--primary); }
+
+        .hero { background: linear-gradient(135deg, var(--bg-light) 0%, #E9FBE4 100%); padding: 120px 20px 80px; text-align: center; }
+        .hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; margin-bottom: 20px; background: linear-gradient(135deg, var(--text-dark), var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.25rem; color: var(--text-gray); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .hero-btns { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .btn { display: inline-block; padding: 16px 32px; border-radius: var(--radius); text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: 2px solid transparent; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(39, 174, 96, 0.3); }
+
+        .features, .catalog, .footer { padding: 80px 20px; }
+        .features { background: var(--bg-white); }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 50px; }
+        .feature-card { text-align: center; padding: 30px; border-radius: var(--radius); background: var(--bg-light); transition: transform 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .feature-card h3 { margin-bottom: 15px; font-size: 1.25rem; }
+
+        .catalog { background: var(--bg-light); }
+        .section-title { text-align: center; font-size: 2rem; margin-bottom: 10px; }
+        .section-subtitle { text-align: center; color: var(--text-gray); margin-bottom: 60px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .product-card { background: var(--card-bg); border-radius: var(--radius); overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .product-image { height: 200px; background-size: cover; background-position: center; }
+        .product-info { padding: 25px; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-info h3 { font-size: 1.25rem; margin-bottom: 10px; color: var(--text-dark); flex-grow: 1; }
+        .product-info p { color: var(--text-gray); margin-bottom: 20px; font-size: 0.95rem; line-height: 1.5; }
+        .product-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .price { font-size: 1.25rem; font-weight: 600; color: var(--primary); }
+        .btn-add { padding: 10px 20px; border-radius: 50px; background: var(--primary); color: #fff; text-decoration: none; font-size: 0.9rem; transition: background 0.3s; }
+        .btn-add:hover { background: var(--primary-dark); }
+
+        /* КОРЗИНА (МОДАЛЬНОЕ ОКНО) */
+        .cart-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .cart-box { background: #fff; width: 100%; max-width: 500px; max-height: 90vh; border-radius: 15px; overflow: hidden; display: flex; flex-direction: column; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #eee; }
+        .cart-title { font-size: 1.5rem; font-weight: 600; }
+        .cart-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .cart-body { padding: 20px; max-height: 400px; overflow-y: auto; }
+        .cart-empty { text-align: center; color: var(--text-gray); padding: 40px 20px; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
+        .cart-item-img { width: 60px; height: 60px; background-size: cover; background-position: center; border-radius: 8px; flex-shrink: 0; }
+        .cart-item-info { flex-grow: 1; }
+        .cart-item-info h4 { margin: 0 0 5px; font-size: 1rem; }
+        .cart-item-controls { display: flex; align-items: center; gap: 10px; }
+        .btn-qty { width: 30px; height: 30px; border: 1px solid #eee; background: #fafafa; border-radius: 50%; cursor: pointer; }
+        .item-qty { min-width: 20px; text-align: center; font-weight: 600; }
+        .btn-remove { margin-left: 10px; background: none; border: none; color: var(--danger); cursor: pointer; }
+        .cart-footer { padding: 20px; border-top: 1px solid #eee; background: #fafafa; }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 1.1rem; font-weight: 600; }
+        .btn-order { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.3s; }
+        .btn-order:hover { background: var(--primary-dark); }
+
+        .footer { background: var(--text-dark); color: #fff; }
+        .footer h2 { font-size: 2rem; margin-bottom: 10px; }
+        .footer p { color: #ccc; margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .contact-methods { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+        .contact-btn { display: flex; align-items: center; gap: 10px; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-weight: 500; transition: all 0.3s; }
+        .contact-btn.telegram { background: #0088cc; color: #fff; }
+        .contact-btn.whatsapp { background: #25D366; color: #fff; }
+        .email-form { max-width: 400px; margin: 0 auto; position: relative; }
+        .email-form input { width: 100%; padding: 18px 20px; border-radius: 50px; border: 1px solid #555; background: #2c2c2c; color: #fff; font-size: 1rem; }
+        .email-form button { position: absolute; right: 5px; top: 5px; bottom: 5px; padding: 0 25px; border-radius: 50px; background: var(--primary); color: #fff; border: none; cursor: pointer; font-weight: 600; }
+        .footer-bottom { margin-top: 50px; padding-top: 30px; border-top: 1px solid #444; color: #888; font-size: 0.9rem; }
+
+        .order-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 2100; }
+        .order-box { background: #fff; width: 100%; max-width: 450px; padding: 40px; border-radius: 15px; text-align: center; position: relative; }
+        .order-close { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; }
+        .order-box h2 { margin-bottom: 20px; color: var(--primary); }
+        .order-form input, .order-form textarea { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #eee; border-radius: 8px; font-size: 1rem; }
+        .order-form button { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-inner container">
+            <a href="#" class="logo">GreenBite</a>
+            <nav>
+                <a href="#features">Преимущества</a>
+                <a href="#catalog">Снеки</a>
+                <a href="#footer">Контакты</a>
+            </nav>
+            <div class="cart-icon" id="openCart">
+                <span>🛒</span>
+                <div class="cart-count" id="cartCount">0</div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Полезные снеки для энергии без сахара</h1>
+            <p>Натуральный состав, доставка по всей России и вкус, который не вредит фигуре.</p>
+            <div class="hero-btns">
+                <a href="#catalog" class="btn btn-primary">Выбрать снеки</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2rem; margin-bottom: 10px;">Почему выбирают GreenBite</h2>
+            <div class="feature-grid">
+                <div class="feature-card"><div class="feature-icon">🌱</div><h3>100% Натурально</h3><p>Никакого скрытого сахара и искусственных добавок.</p></div>
+                <div class="feature-card"><div class="feature-icon">⚡</div><h3>Заряд энергии</h3><p>Сбалансированные белки для долгой сытости.</p></div>
+                <div class="feature-card"><div class="feature-icon">🚚</div><h3>Быстрая доставка</h3><p>Привезем в любую точку России.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="catalog" class="catalog">
+        <div class="container">
+            <h2 class="section-title">Наши полезные снеки</h2>
+            <p class="section-subtitle">От хрустящих овощных чипсов до протеиновых батончиков.</p>
+            
+            <div class="products-grid">
+                <div class="product-card" data-id="1" data-name="Протеиновые батончики" data-price="450" data-img="https://placehold.co/400x300/E9FBE4/27AE60?text=Ореховые+батончики">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3>Протеиновые батончики с миндалем</h3>
+                        <p>22г растительного белка, без добавленного сахара.</p>
+                        <div class="product-footer">
+                            <span class="price">450 ₽</span>
+                            <a href="#" class="btn-add">В корзину</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-id="2" data-name="Овощные чипсы" data-price="290" data-img="https://placehold.co/400x300/FFF8E1/FFA000?text=Овощные+чипсы">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3>Хрустящие чипсы из кейла и свёклы</h3>
+                        <p>Запеченные, а не жареные. Источник клетчатки.</p>
+                        <div class="product-footer">
+                            <span class="price">290 ₽</span>
+                            <a href="#" class="btn-add">В корзину</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-id="3" data-name="Микс сухофруктов" data-price="350" data-img="https://placehold.co/400x300/E3F2FD/1976D2?text=Сухофрукты+микс">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3>Натуральный микс сухофруктов</h3>
+                        <p>Манго, ананас и киви естественной сушки.</p>
+                        <div class="product-footer">
+                            <span class="price">350 ₽</span>
+                            <a href="#" class="btn-add">В корзину</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-id="4" data-name="Ореховый микс" data-price="650" data-img="https://placehold.co/400x300/F3E5F5/6A1B9A?text=Ореховый+микс">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3>Кэшью, макадамия и пекан</h3>
+                        <p>Премиальные орехи, богатые Омега-3.</p>
+                        <div class="product-footer">
+                            <span class="price">650 ₽</span>
+                            <a href="#" class="btn-add">В корзину</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer" class="footer">
+        <div class="container">
+            <h2>Остались вопросы?</h2>
+            <p>Напишите нам в мессенджеры или оставьте почту для рассылки скидок.</p>
+            <div class="contact-methods">
+                <a href="https://t.me/your_username" target="_blank" class="contact-btn telegram"><span>📱</span> Telegram</a>
+                <a href="https://wa.me/79991234567" target="_blank" class="contact-btn whatsapp"><span>💬</span> WhatsApp</a>
+            </div>
+            <form class="email-form" id="emailForm">
+                <input type="email" placeholder="Введите ваш E-mail для скидки 10%" required>
+                <button type="submit">Подписаться</button>
+            </form>
+            <div class="footer-bottom">© 2024 GreenBite. Полезные снеки и закуски.</div>
+        </div>
+    </footer>
+
+    <!-- МОДАЛЬНОЕ ОКНО КОРЗИНЫ -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-box">
+            <div class="cart-header">
+                <div class="cart-title">Корзина</div>
+                <button class="cart-close" id="closeCart">&times;</button>
+            </div>
+            <div class="cart-body" id="cartBody">
+                <!-- Сюда вставляются товары скриптом -->
+            </div>
+            <div class="cart-footer">
+                <div class="total-row">
+                    <span>Итого:</span>
+                    <span id="totalPrice">0 ₽</span>
+                </div>
+                <button class="btn-order" id="openOrder">Оформить заказ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ОФОРМЛЕНИЯ ЗАКАЗА -->
+    <div class="order-modal" id="orderModal">
+        <div class="order-box">
+            <button class="order-close" id="closeOrder">&times;</button>
+            <h2>Оформление заказа</h2>
+            <form class="order-form" id="finalOrderForm">
+                <input type="text" placeholder="Ваше имя" required>
+                <input type="tel" placeholder="Ваш телефон" required>
+                <input type="email" placeholder="Ваш E-mail" required>
+                <textarea placeholder="Адрес доставки или комментарий" rows="3"></textarea>
+                <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 20px;">Оплата: переводом по СБП (QR-код или номер) после подтверждения заказа.</p>
+                <button type="submit">Отправить заказ</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Состояние корзины в памяти браузера
+        let cart = [];
+
+        const cartModal = document.getElementById('cartModal');
+        const openCartBtn = document.getElementById('openCart');
+        const closeCartBtn = document.getElementById('closeCart');
+        const cartBody = document.getElementById('cartBody');
+        const cartCount = document.getElementById('cartCount');
+        const totalPrice = document.getElementById('totalPrice');
+
+        const orderModal = document.getElementById('orderModal');
+        const openOrderBtn = document.getElementById('openOrder');
+        const closeOrderBtn = document.getElementById('closeOrder');
+        const finalOrderForm = document.getElementById('finalOrderForm');
+
+        // Рендеринг корзины
+        function renderCart() {
+            cartBody.innerHTML = '';
+            if (cart.length === 0) {
+                cartBody.innerHTML = '<div class="cart-empty">Корзина пуста</div>';
+            } else {
+                cart.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = `
+                        <div class="cart-item-img" style="background-image: url('${item.img}')"></div>
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <div class="cart-item-controls">
+                                <button class="btn-qty" data-action="minus" data-id="${item.id}">-</button>
+                                <div class="item-qty">${item.qty}</div>
+                                <button class="btn-qty" data-action="plus" data-id="${item.id}">+</button>
+                                <button class="btn-remove" data-id="${item.id}">Удалить</button>
+                            </div>
+                        </div>
+                        <div>${item.price * item.qty} ₽</div>
+                    `;
+                    cartBody.appendChild(div);
+                });
+            }
+            updateTotals();
+        }
+
+        function updateTotals() {
+            const sum = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+            const count = cart.reduce((acc, item) => acc + item.qty, 0);
+            totalPrice.textContent = sum + ' ₽';
+            cartCount.textContent = count;
+        }
+
+        // Добавление в корзину
+        document.querySelectorAll('.btn-add').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const card = this.closest('.product-card');
+                const id = card.dataset.id;
+                const name = card.dataset.name;
+                const price = parseInt(card.dataset.price);
+                const img = card.dataset.img;
+
+                const existing = cart.find(i => i.id === id);
+                if (existing) {
+                    existing.qty++;
+                } else {
+                    cart.push({ id, name, price, img, qty: 1 });
+                }
+                renderCart();
+            });
+        });
+
+        // Управление корзиной (динамически, так как элементы пересоздаются)
+        cartBody.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-remove')) {
+                const id = e.target.dataset.id;
+                cart = cart.filter(i => i.id !== id);
+                renderCart();
+            }
+            if (e.target.classList.contains('btn-qty')) {
+                const id = e.target.dataset.id;
+                const action = e.target.dataset.action;
+                const item = cart.find(i => i.id === id);
+                if (action === 'plus') item.qty++;
+                if (action === 'minus' && item.qty > 1) item.qty--;
+                renderCart();
+            }
+        });
+
+        // Открытие/закрытие корзины
+        openCartBtn.addEventListener('click', () => cartModal.style.display = 'flex');
+        closeCartBtn.addEventListener('click', () => cartModal.style.display = 'none');
+        window.addEventListener('click', e => { if (e.target === cartModal) cartModal.style.display = 'none'; });
+
+        // Оформление заказа
+        openOrderBtn.addEventListener('click', () => {
+            if (cart.length === 0) return;
+            orderModal.style.display = 'flex';
+        });
+        closeOrderBtn.addEventListener('click', () => orderModal.style.display = 'none');
+        window.addEventListener('click', e => { if (e.target === orderModal) orderModal.style.display = 'none'; });
+
+        finalOrderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Здесь данные улетают вам в Telegram или на почту
+            alert('Заказ отправлен! Мы свяжемся с вами для уточнения деталей и оплаты.');
+            cart = [];
+            renderCart();
+            orderModal.style.display = 'none';
+            cartModal.style.display = 'none';
+        });
+
+        // Форма подписки (как в прошлый раз)
+        const emailForm = document.getElementById('emailForm');
+        const thanksModal = document.getElementById('thanksModal');
+        const modalClose = document.getElementById('modalClose');
+
+        emailForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            thanksModal.style.display = 'flex';
+            emailForm.reset();
+        });
+        modalClose.addEventListener('click', function() { thanksModal.style.display = 'none'; });
+        window.addEventListener('click', function(e) { if (e.target === thanksModal) thanksModal.style.display = 'none'; });
+    </script>
+</body>
+</html>
